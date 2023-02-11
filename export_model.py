@@ -27,7 +27,7 @@ observation_size = model.observation_space.shape
 dummy_input = th.randn(1, *observation_size)
 print(observation_size)
 
-jit_path = "./model_traced.pt"
+jit_path = "./models/CartPole-v1/model_traced.pt"
 
 # Trace and optimize the module
 traced_module = th.jit.trace(onnxable_model.eval(), dummy_input)
