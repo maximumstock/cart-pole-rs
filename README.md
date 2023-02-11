@@ -9,3 +9,7 @@
 - `libstdc++`
 - `libz`
 - `libtorch`
+
+Python:
+
+- `stable-baselines3`
