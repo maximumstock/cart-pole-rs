@@ -1,6 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use inference_web::{extract_outputs, InferenceInput, CARTPOLE_MODEL_FILE_PATH};
-use tch::IValue;
+use inference_web::{infer, InferenceInput, CARTPOLE_MODEL_FILE_PATH};
 
 fn criterion_benchmark(c: &mut Criterion) {
     let model = tch::CModule::load(CARTPOLE_MODEL_FILE_PATH).unwrap();
@@ -8,12 +7,7 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     c.bench_function("cartpole-inference", |b| {
         b.iter(|| {
-            let _ = black_box(
-                model
-                    .forward_is(&[IValue::Tensor(tch::Tensor::of_slice(&state))])
-                    .map(extract_outputs)
-                    .unwrap(),
-            );
+            let _ = black_box(infer(&model, &state).unwrap());
         })
     });
 }

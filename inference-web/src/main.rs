@@ -3,11 +3,12 @@ use std::{net::SocketAddr, sync::Arc};
 use axum::{
     extract::{Query, State},
     http::StatusCode,
+    response::IntoResponse,
     routing::get,
-    Router,
+    Json, Router,
 };
-use inference_web::{infer, CARTPOLE_MODEL_FILE_PATH};
-use serde::Deserialize;
+use inference_web::{infer, Inference, CARTPOLE_MODEL_FILE_PATH};
+use serde::{Deserialize, Serialize};
 use tch::CModule;
 use tracing::info;
 
@@ -21,7 +22,7 @@ async fn main() {
 
     // load the traced model
     let state = AppState {
-        model: tch::CModule::load(CARTPOLE_MODEL_FILE_PATH).unwrap(),
+        model: tch::CModule::load_on_device(CARTPOLE_MODEL_FILE_PATH, tch::Device::Cpu).unwrap(),
     };
     let shared_state = Arc::new(state);
 
@@ -43,34 +44,46 @@ struct AppState {
 }
 type SharedState = Arc<AppState>;
 
+/// HTTP handler that takes query parameters, runs inference, and returns a JSON response or
+/// a 500 internal server error.
 async fn inference_endpoint(
     State(state): State<SharedState>,
-    query: Query<InferenceQueryParams>,
-) -> Result<String, StatusCode> {
+    query: Query<InferenceRequestQueryParams>,
+) -> Result<impl IntoResponse, StatusCode> {
     infer(&state.model, &query.0.into())
-        .map(|inference| {
-            format!(
-                "{{\"left\": {}, \"right\": {}}}͘",
-                inference.left, inference.right
-            )
-        })
+        .map(|inference| Json(InferenceResponse::from(inference)))
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
 }
 #[derive(Deserialize)]
-struct InferenceQueryParams {
+struct InferenceRequestQueryParams {
     position: f32,
     velocity: f32,
     angle: f32,
     angular_velocity: f32,
 }
 
-impl From<InferenceQueryParams> for [f32; 4] {
-    fn from(value: InferenceQueryParams) -> Self {
+impl From<InferenceRequestQueryParams> for [f32; 4] {
+    fn from(value: InferenceRequestQueryParams) -> Self {
         [
             value.position,
             value.velocity,
             value.angle,
             value.angular_velocity,
         ]
+    }
+}
+
+#[derive(Serialize)]
+struct InferenceResponse {
+    left: f64,
+    right: f64,
+}
+
+impl From<Inference> for InferenceResponse {
+    fn from(value: Inference) -> Self {
+        InferenceResponse {
+            left: value.left,
+            right: value.right,
+        }
     }
 }

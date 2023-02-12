@@ -1,3 +1,4 @@
+use serde::Serialize;
 use tch::IValue;
 
 pub const CARTPOLE_MODEL_FILE_PATH: &str = "./models/CartPole-v1/model_traced.pt";
@@ -5,7 +6,7 @@ pub const CARTPOLE_MODEL_FILE_PATH: &str = "./models/CartPole-v1/model_traced.pt
 /// At every time step, you can observe its position (x), velocity (x_dot), angle (theta), and angular velocity (theta_dot)
 pub type InferenceInput = [f32; 4];
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Inference {
     pub left: f64,
     pub right: f64,
