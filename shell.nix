@@ -18,7 +18,6 @@ pkgs.mkShell rec {
     pkg-config
     gettext
 
-
     # Language Setup
     python311
     python311Packages.pip

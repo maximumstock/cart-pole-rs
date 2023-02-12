@@ -1,7 +1,12 @@
 use serde::Serialize;
 use tch::IValue;
 
-pub const CARTPOLE_MODEL_FILE_PATH: &str = "./models/CartPole-v1/model_traced.pt";
+pub fn get_model_file_path() -> String {
+    format!(
+        "{}/../models/CartPole-v1/model_traced.pt",
+        std::env::var("CARGO_MANIFEST_DIR").unwrap()
+    )
+}
 
 /// At every time step, you can observe its position (x), velocity (x_dot), angle (theta), and angular velocity (theta_dot)
 pub type InferenceInput = [f32; 4];

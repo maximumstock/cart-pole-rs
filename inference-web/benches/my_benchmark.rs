@@ -1,8 +1,8 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use inference_web::{infer, InferenceInput, CARTPOLE_MODEL_FILE_PATH};
+use inference_web::{get_model_file_path, infer, InferenceInput};
 
 fn criterion_benchmark(c: &mut Criterion) {
-    let model = tch::CModule::load(CARTPOLE_MODEL_FILE_PATH).unwrap();
+    let model = tch::CModule::load(get_model_file_path()).unwrap();
     let state: InferenceInput = [0f32, 0f32, -1f32, 0f32];
 
     c.bench_function("cartpole-inference", |b| {

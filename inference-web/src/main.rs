@@ -7,7 +7,7 @@ use axum::{
     routing::get,
     Json, Router,
 };
-use inference_web::{infer, Inference, CARTPOLE_MODEL_FILE_PATH};
+use inference_web::{get_model_file_path, infer, Inference};
 use serde::{Deserialize, Serialize};
 use tch::CModule;
 use tracing::info;
@@ -22,7 +22,7 @@ async fn main() {
 
     // load the traced model
     let state = AppState {
-        model: tch::CModule::load_on_device(CARTPOLE_MODEL_FILE_PATH, tch::Device::Cpu).unwrap(),
+        model: tch::CModule::load_on_device(get_model_file_path(), tch::Device::Cpu).unwrap(),
     };
     let shared_state = Arc::new(state);
 
