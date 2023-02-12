@@ -1,24 +1,24 @@
 use tch::IValue;
 
-pub const CARTPOLE_MODEL_FILE_PATH: &str = "../models/CartPole-v1/model_traced.pt";
+pub const CARTPOLE_MODEL_FILE_PATH: &str = "./models/CartPole-v1/model_traced.pt";
 
 /// At every time step, you can observe its position (x), velocity (x_dot), angle (theta), and angular velocity (theta_dot)
-pub type State = [f32; 4];
+pub type InferenceInput = [f32; 4];
 
 #[derive(Debug, Clone)]
 pub struct Inference {
-    pub(crate) left: f64,
-    pub(crate) right: f64,
-    pub(crate) reward: f64,
+    pub left: f64,
+    pub right: f64,
+    pub reward: f64,
 }
 
-pub fn infer(model: &tch::CModule, state: &State) -> Result<Option<Inference>, tch::TchError> {
+pub fn infer(model: &tch::CModule, state: &InferenceInput) -> Result<Inference, tch::TchError> {
     model
         .forward_is(&[IValue::Tensor(tch::Tensor::of_slice(state))])
         .map(extract_outputs)
 }
 
-pub fn extract_outputs(output: IValue) -> Option<Inference> {
+pub fn extract_outputs(output: IValue) -> Inference {
     if let IValue::Tuple(list) = output {
         let actions = list.get(0).unwrap();
         let reward = list.get(1).unwrap();
@@ -30,12 +30,12 @@ pub fn extract_outputs(output: IValue) -> Option<Inference> {
             IValue::Tensor(t) => t.double_value(&[0]),
             _ => 0f64,
         };
-        return Some(Inference {
+        return Inference {
             left,
             right,
             reward,
-        });
+        };
     }
 
-    None
+    unreachable!()
 }
