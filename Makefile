@@ -4,4 +4,7 @@ download:
 export:
 	python3.11 export_model.py
 
-.PHONY: download export
+bench:
+	cd benchmark && ./bench.sh
+
+.PHONY: download export bench

@@ -1,0 +1,6 @@
+GET http://localhost:3000/inference?position=0&velocity=0&angle=-1&angular_velocity=0
+GET http://localhost:3000/inference?position=1&velocity=-3&angle=10&angular_velocity=0
+GET http://localhost:3000/inference?position=-1&velocity=2&angle=3&angular_velocity=0
+GET http://localhost:3000/inference?position=23&velocity=0.01&angle=-3&angular_velocity=-3.14
+GET http://localhost:3000/inference?position=-42&velocity=-10&angle=-1.12&angular_velocity=2
+GET http://localhost:3000/inference?position=42&velocity=100&angle=3.14&angular_velocity=100
