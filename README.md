@@ -1,8 +1,7 @@
 # cart-pole-rs
 
 A Rust implementation of a CartPole RL inference service based on the
-[Axum web framework](https://github.com/tokio-rs/axum), following
-[this problem statement](https://gist.github.com/meiemari/c952ce679c8d7e5d80f3c94be7c04c29).
+[Axum web framework](https://github.com/tokio-rs/axum).
 
 ## Requirements
 
@@ -90,7 +89,7 @@ Found 1 outliers among 100 measurements (1.00%)
 
 ### HTTP Service Benchmark
 
-Run the service in release mode via `cargo run --release` and use `make bench` in the project root to run `[vegeta](https://github.com/tsenart/vegeta)` as a HTTP load testing tool, making requests to endpoints specified in `benchmark/targets.txt`.
+Run the service in release mode via `cargo run --release` and use `make bench` in the project root to run [vegeta](https://github.com/tsenart/vegeta) as a HTTP load testing tool, making requests to endpoints specified in `benchmark/targets.txt`.
 See `benchmark/bench.sh` for details (200 req/s, running for 30s).
 
 A 2020 M1 MacBook yields:
